@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Secrets / local config
+.env
+.env.*
+!.env.example
+
+# Local output / runtime artifacts
+samples/
+*.log
+*.pkl
+*.pt
+*.pth
+*.h5
+*.dlpk
+*.onnx
+*.mp4
+*.avi
+*.mov
+*.mkv
+overall_damage_report.json
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

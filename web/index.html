@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Avaris catastrophe-response and drone inspection simulation.">
+  <title>Avaris</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="map.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/@turf/turf@7.4.0/turf.min.js"></script>
+</head>
+<body>
+  <div id="map" aria-label="Avaris operational map"></div>
+
+  <header class="toolbar" aria-label="Simulation controls">
+    <div class="brand">
+      <img src="assets/avaris_logo.png" alt="Avaris">
+      <div>
+        <div class="brand-name">Avaris</div>
+        <div class="brand-place">Bloomington, IL</div>
+      </div>
+    </div>
+
+    <div class="toolbar-divider"></div>
+
+    <label class="field">
+      <span>Scenario</span>
+      <select id="disasterType">
+        <option value="tornado" selected>Tornado</option>
+        <option value="wind">Severe wind</option>
+      </select>
+    </label>
+
+    <label class="field compact-field">
+      <span>Drones</span>
+      <select id="droneCount">
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5" selected>5</option>
+        <option value="6">6</option>
+        <option value="8">8</option>
+      </select>
+    </label>
+
+    <div class="toolbar-actions">
+      <button class="secondary" id="simulateBtn" disabled>Simulate</button>
+      <button class="primary" id="deployBtn" disabled>Deploy</button>
+      <button class="secondary" id="aiBtn">AI</button>
+    </div>
+
+    <div class="toolbar-status" title="Application status">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Loading zoning data…</span>
+    </div>
+  </header>
+
+  <aside class="mission-panel" id="missionPanel" aria-label="Mission details">
+    <div class="panel-heading">
+      <span>Mission</span>
+      <strong id="missionState">Standby</strong>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric"><span>Affected</span><strong id="affectedMetric">—</strong></div>
+      <div class="metric"><span>Critical</span><strong id="criticalMetric">—</strong></div>
+      <div class="metric"><span>Finish</span><strong id="distanceMetric">—</strong></div>
+      <div class="metric"><span>Fleet</span><strong id="fleetMetric">—</strong></div>
+    </div>
+
+    <div class="fleet-list" id="fleetList" aria-label="Drone assignments"></div>
+    <div class="plan-meta" id="planMeta"></div>
+  </aside>
+
+  <aside class="ai-panel" id="aiPanel" aria-label="AI inspection" hidden>
+    <div class="panel-heading ai-heading">
+      <span>AI inspection</span>
+      <div>
+        <span class="ai-mode" id="aiMode">SAMPLE</span>
+        <button class="panel-close" id="aiCloseBtn" aria-label="Close AI panel">×</button>
+      </div>
+    </div>
+
+    <div class="ai-zone" id="aiZone">NOAA Hurricane Helene reference</div>
+
+    <div class="ai-media">
+      <img
+        class="ai-preview"
+        id="aiPreview"
+        src="https://oceanservice.noaa.gov/news/sep24/helene-asheville-oct-5-960.jpg"
+        alt="NOAA aerial damage imagery of a destroyed property in Asheville, North Carolina after Hurricane Helene"
+      >
+      <span class="ai-image-badge" id="aiImageBadge">NOAA IMAGE</span>
+    </div>
+
+    <div class="ai-summary">
+      <div><span>Damage</span><strong id="aiDamage">Severe</strong></div>
+      <div><span>Confidence</span><strong id="aiConfidence">93%</strong></div>
+    </div>
+
+    <div class="ai-findings" id="aiFindings"></div>
+    <div class="ai-action"><span>Action</span><strong id="aiAction">Adjuster review</strong></div>
+
+    <div class="ai-controls">
+      <input id="aiFile" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+      <button class="secondary" id="aiAnalyzeDemoBtn">Analyze demo</button>
+      <button class="primary" id="aiAnalyzeBtn">Upload image</button>
+    </div>
+    <div class="ai-note" id="aiNote">NOAA Hurricane Helene · Asheville, NC · sample output</div>
+  </aside>
+
+  <aside class="legend" aria-label="Map legend">
+    <div class="legend-scale"></div>
+    <div class="legend-labels"><span>Low</span><span>Critical</span></div>
+    <div class="legend-row"><i class="hazard-swatch"></i><span>Hazard path</span></div>
+    <div class="legend-row"><i class="inspected-swatch"></i><span>Inspected</span></div>
+  </aside>
+
+  <section class="mission-progress" aria-live="polite">
+    <div class="progress-line">
+      <span id="progressLabel">Inspection coverage</span>
+      <strong id="missionCoverage">0 / 0</strong>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </section>
+
+  <script src="routing.js"></script>
+  <script src="priority_map.js"></script>
+</body>
+</html>
